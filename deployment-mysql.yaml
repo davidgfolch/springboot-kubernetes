@@ -1,0 +1,125 @@
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: springboot-mysql-pv
+  labels:
+    type: local
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/tmp/kubernetes-mysql-data"
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: springboot-mysql-pvc
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: springboot-kubernetes
+  name: springboot-mysql
+spec:
+  ports:
+    - port: 3306
+  selector:
+    app: springboot-kubernetes
+  clusterIP: None
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: springboot-kubernetes
+  name: springboot-mysql
+spec:
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: springboot-kubernetes
+  template:
+    metadata:
+      labels:
+        app: springboot-kubernetes
+        tier: db
+    spec:
+      containers:
+        - image: mysql:8.0.23  #ssl/certificate exceptions in user mss
+#        - image: mysql:8.0.23  #ssl/certificate exceptions in user mss
+#        - image: mysql:5.7  error chungo!!
+#        - image: library/mysql:latest
+          name: mysql
+          env:
+            - name: MYSQL_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: springboot-mysql-db
+                  key: mysql-database
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: springboot-mysql-secret
+                  key: mysql-root-password
+            - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: springboot-mysql-secret
+                  key: mysql-user
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: springboot-mysql-secret
+                  key: mysql-password
+          ports:
+            - containerPort: 3306
+              name: mysql
+          volumeMounts:
+            - name: mysql-persistent-storage
+              mountPath: /var/lib/mysql
+      volumes:
+        - name: mysql-persistent-storage
+          persistentVolumeClaim:
+            claimName: springboot-mysql-pvc
+#---
+#apiVersion: v1
+#kind: PersistentVolume
+#metadata:
+#  name: mysql-pv-volume
+#  labels:
+#    app: springboot-kubernetes
+#    type: local
+#spec:
+#  storageClassName: manual
+#  capacity:
+#    storage: 20Gi
+#  accessModes:
+#    - ReadWriteOnce
+#  hostPath:
+#    path: "/mnt/data"
+#---
+#apiVersion: v1
+#kind: PersistentVolumeClaim
+#metadata:
+#  name: mysql-pv-claim
+#  labels:
+#    app: springboot-kubernetes
+#spec:
+#  storageClassName: manual
+#  accessModes:
+#    - ReadWriteOnce
+#  resources:
+#    requests:
+#      storage: 20Gi

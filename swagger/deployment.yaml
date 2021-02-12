@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: springboot-kubernetes
+  name: springboot-swagger
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: springboot-kubernetes
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: springboot-kubernetes
+    spec:
+      containers:
+      - image: davidgfolch/kubernetes-springboot-swagger
+        name: springboot-swagger
+        resources: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: springboot-kubernetes
+  name: springboot-swagger
+spec:
+  ports:
+  - name: 8080-8080
+    port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: springboot-kubernetes
+  type: ClusterIP

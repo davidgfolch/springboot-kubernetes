@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: springboot-kubernetes
+    tier: backend
+  name: springboot-user
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: springboot-kubernetes
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: springboot-kubernetes
+    spec:
+      containers:
+        - image: davidgfolch/kubernetes-springboot-user
+          name: springboot-user
+          resources: {}
+          env:
+          - name: mysql-root-password
+            valueFrom:
+#              configMapKeyRef:
+#                name: springboot-mysql-secret
+#                key: mysql-root-password
+              secretKeyRef:
+                name: springboot-mysql-secret
+                key: mysql-root-password
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: springboot-kubernetes
+    tier: backend
+  name: springboot-user
+spec:
+  ports:
+  - name: 8080-8080
+    port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: springboot-kubernetes
+  type: ClusterIP

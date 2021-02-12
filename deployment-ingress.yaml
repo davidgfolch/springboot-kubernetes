@@ -1,0 +1,45 @@
+apiVersion: networking.k8s.io/v1
+kind: IngressClass
+metadata:
+  labels:
+    app: springboot-kubernetes
+  name: springboot-ingressclass-lb
+spec:
+#  controller: example.com/ingress-controller
+  controller: example.com/springboot-ingress
+  parameters:
+    apiGroup: k8s.springboot.com
+    kind: IngressParameters
+    name: springboot-ingressclass-lb
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  labels:
+    app: springboot-kubernetes
+  name: springboot-ingress
+#  annotations:
+#    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  defaultBackend:
+    service:
+      name: springboot-swagger
+      port:
+        number: 8080
+  rules:
+    - http:
+        paths:
+          - path: /user
+            pathType: Prefix
+            backend:
+              service:
+                name: springboot-user
+                port:
+                  number: 8080
+#          - path: /swagger
+#            pathType: Prefix
+#            backend:
+#              service:
+#                name: springboot-swagger
+#                port:
+#                  number: 8080
