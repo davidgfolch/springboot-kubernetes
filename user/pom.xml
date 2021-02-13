@@ -107,8 +107,14 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>2.0.4.RELEASE</version>
-            </plugin>
+				<!--<version>2.0.4.RELEASE</version> ignoring WARNING from maven otherwise spring-boot:build-image doesn't work -->
+				<configuration>
+					<layers>
+						<enabled>true</enabled>
+					</layers>
+					<goal>compile</goal>
+				</configuration>
+			</plugin>
             <!-- maven kubernetes plugin  https://maven.fabric8.io/ -->
 <!--            <plugin>-->
 <!--                <groupId>io.fabric8</groupId>-->

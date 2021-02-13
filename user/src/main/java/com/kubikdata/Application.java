@@ -16,7 +16,7 @@ public class Application {
 
 	static {
 //		System.setProperty("https.protocols", "TLSv1,TLSv1.1,TLSv1.2");
-		System.setProperty("https.protocols", "TLSv1.2");
+		System.setProperty("https.protocols", "TLSv1.2");  //fix error comunicating with mysql service
 	}
 
 	public static void main(String[] args) {

@@ -28,15 +28,19 @@ kubectl create configmap springboot-mysql-db --from-literal="mysql-database=spri
 
 Microservices archetype using a mysql database.
 
+- spring-boot-maven-plugin optimizes jar size & startup time.
 - Kubernetes mysql service/pod (deployment.mysql.yaml)
 - Kubernetes fan-out ingress config for backend services (deployment-ingress.yaml)
 - Kubernetes' secrets through dockerfile and springboot application.properties
 
-## Compile deploy & undeploy
+## Compile deploy & undeploy (build.sh)
 
 Compile all and deploy to kubernetes.
+> NOTE: you must `docker login` & change your $docker-io-user in `./build.sh`
+
 
     ./build.sh
+
 
 Compile & deploy only:
 - **one** microservice:
@@ -53,6 +57,26 @@ Just deploy/undeploy:
     ./build.sh justDeploy user swagger
     ./build.sh justDelete
     ./build.sh justDelete user
+
+#### How it works (build.sh)
+
+For all, one or several microservices, it:
+- Kubernetes undeploy
+- compiles optimized
+- docker tag & push to [my repo](https://hub.docker.com/repository/docker/davidgfolch/kubernetes-springboot-db)
+- Kubernetes deploy
+
+
+#### Known issues & warnings
+
+- Maven: ignoring WARNING for **spring-boot-maven-plugin** otherwise `spring-boot:build-image` doesn't work
+
+### TODO
+
+- swagger service auto-discover endpoints
+- security improvements
+- front-end?
+- maven kubernetes plugin  https://maven.fabric8.io/ ??
 
 ## Kubernetes guide
 
