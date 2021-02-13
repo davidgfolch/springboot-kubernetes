@@ -37,7 +37,8 @@ function buildImage() {
 }
 
 function compileBuildPushApply() {
-  mvn clean spring-boot:build-image -pl $1 -Dlogging-level-test=warn &&
+#  mvn clean spring-boot:build-image -pl $1 -Dlogging-level-test=warn &&
+  mvn clean package -pl $1 -Dlogging-level-test=warn &&
   #mvn package fabric8:build -pl $1 -DskipTests &&
   buildImage $1
   kubectl apply -f $1/deployment.yaml
