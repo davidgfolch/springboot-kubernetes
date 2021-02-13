@@ -16,6 +16,7 @@ kubectl create configmap springboot-mysql-db --from-literal="mysql-database=spri
 ## Tech stack
 
 - Bash
+- Maven
 - Docker
 - Kubernetes
 - Java
@@ -25,10 +26,13 @@ kubectl create configmap springboot-mysql-db --from-literal="mysql-database=spri
 
 ## Technical overview
 
-- Microservices archetype using a mysql database.
+Microservices archetype using a mysql database.
+
+- Kubernetes mysql service/pod (deployment.mysql.yaml)
+- Kubernetes fan-out ingress config for backend services (deployment-ingress.yaml)
 - Kubernetes' secrets through dockerfile and springboot application.properties
 
-## Compile and deploy
+## Compile deploy & undeploy
 
 Compile all and deploy to kubernetes.
 
@@ -43,13 +47,47 @@ Compile & deploy only:
 
         ./build.sh user swagger
 
-## Check kubernetes deployments, services & pods
+Just deploy/undeploy:
+
+    ./build.sh justDeploy
+    ./build.sh justDeploy user swagger
+    ./build.sh justDelete
+    ./build.sh justDelete user
+
+## Kubernetes guide
+
+### Check kubernetes deployments, services & pods
 
 ```shell
 kubectl get all
 kubectl describe springboot-user-xxxxxx
-kubectl logs springboot-user-xxxxxx
+kubectl logs -f springboot-user-xxxxxx
 ```
+
+
+### Dev utilities
+
+#### Check the endpoint with ingress
+
+The ip is the springboot-ingress ip (`kubectl get ingress springboot-ingress`)
+
+    curl -i 192.168.49.2/user/recover && echo
+    curl 192.168.49.2/user/actuator | jq .
+
+#### Check the endpoints without an ingress
+
+Create a port forwarding to access service end-points when there is no ingress:
+
+    kubectl port-forward svc/springboot-user 8080:8080
+
+Check the end-points works
+
+    curl -i localhost:8080/user/recover
+    curl localhost:8080/v3/api-docs/ | jq .
+    curl localhost:8080/user/actuator | jq .
+
+
+
 
 ### Connect to mysql service shell
 

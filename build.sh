@@ -1,7 +1,18 @@
 #!/bin/bash
+
+debug=false
+if [[ "$*" == *debug* ]]; then
+  debug=true
+fi
+filterByModules=false
+declare -a microservices=(
+  user
+  swagger
+)
+
 function logCommands {
-  if [[ debug == true ]]; then
-    if [[ $1 == true ]]; then
+  if $debug; then
+    if $1; then
         set -x #log commands executed
       else
         set +x #dont log commands executed
@@ -25,15 +36,8 @@ function buildImage() {
   exit
 }
 
-debug=false
-filterByModules=false
-declare -a microservices=(
-  user
-  swagger
-)
-
 if [ $# -eq 0 ]; then
-  println "Optional parameters: justDeploy justDelete"
+  println "Optional parameters: debug justDeploy justDelete"
 fi
 
 logCommands false
@@ -68,16 +72,17 @@ fi
 
 if [[ "$*" != *justDeploy* && "$*" != *justDelete* ]]; then
     if [[ $filterByModules == false ]]; then
-      println "# BUILDING ALL IMAGES "
-      println "######################"
-      mvn clean install
+      println "- BUILDING ALL IMAGES "
+      println "----------------------"
+      mvn clean install -Dlogging-level-test=off
+    else
+      println "- BUILDING ONLY IMAGES IN PARAMETERS "
+      println "-------------------------------------"
     fi
     for mss in "${microservices[@]}"; do
       if [[ $filterByModules == false ]]; then
           buildImage $mss
         else
-          println "# BUILDING ONLY IMAGES IN PARAMETERS "
-          println "#####################################"
           for param in "$@"; do
             [[ $mss == "$param" ]] &&
               mvn clean spring-boot:build-image -pl $mss -Dlogging-level-test=warn &&
@@ -95,9 +100,3 @@ for mss in "${microservices[@]}"; do
 done
 
 println "Wait for pods to be created & available"
-println "Create a port forwarding to access user end-points: kubectl port-forward svc/springboot-user 8080:8080 &"
-println "Check the end-point works: curl localhost:8080/actuator | jq ."
-println "Check the end-point works: curl -i localhost:8080/user/recover"
-println "Check the end-point works: curl localhost:8080/v3/api-docs/ | jq ."
-println "Kill the port-forward process: ps -ef | grep port-forward"
-println "Check user-end point (where the ip is the springboot-ingress ip, see dashboard): curl -i 192.168.49.2/user/recover"
