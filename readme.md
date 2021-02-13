@@ -1,29 +1,59 @@
 ## Pre-requisites
 
-You need a kubernetes cluster running, f.ex. minikube:
+### Start containers
+You need Docker, and a kubernetes cluster running (f.ex. minikube), see:
 
-    minikube start
+```shell
+./start.sh
+```
 
-## Create kubernetes secrets
+### Create kubernetes secrets
 
-    kubectl create secret generic springboot-mysql-secret --from-literal=mysql-root-password=kube1234 --from-literal=mysql-user=springboot-user --from-literal=mysql-password=kube1234
-    kubectl create configmap springboot-mysql-db --from-literal="mysql-database=springboot-db"
+```shell
+kubectl create secret generic springboot-mysql-secret --from-literal=mysql-root-password=kube1234 --from-literal=mysql-user=springboot-user --from-literal=mysql-password=kube1234
+kubectl create configmap springboot-mysql-db --from-literal="mysql-database=springboot-db"
+```
+## Tech stack
 
-## Compile and publish
+- Bash
+- Docker
+- Kubernetes
+- Java
+- Springboot2
+- RestApi/Swagger/OpenApi
+- Mysql
+
+## Technical overview
+
+- Microservices archetype using a mysql database.
+- Kubernetes' secrets through dockerfile and springboot application.properties
+
+## Compile and deploy
 
 Compile all and deploy to kubernetes.
 
     ./build.sh
 
-To only one microservice:
+Compile & deploy only:
+- **one** microservice:
+  
+        ./build.sh user
 
-    ./build.sh user swagger
+- **some** microservices:
 
-To only some microservices:
+        ./build.sh user swagger
 
-    ./build.sh user
+## Check kubernetes deployments, services & pods
+
+```shell
+kubectl get all
+kubectl describe springboot-user-xxxxxx
+kubectl logs springboot-user-xxxxxx
+```
 
 ### Connect to mysql service shell
 
-    kubectl run -it --rm --image=mysql:5.6 --restart=Never mysql-client -- mysql -h springboot-mysql -ppassword
-    kubectl exec -it springboot-mysql-5fdd4c8d5b-lq6nw -- bash
+```shell
+kubectl exec -it springboot-mysql-5fdd4c8d5b-lq6nw -- bash
+kubectl run -it --rm --image=mysql:5.6 --restart=Never mysql-client -- mysql -h springboot-mysql -ppassword
+```

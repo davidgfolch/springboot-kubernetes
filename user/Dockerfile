@@ -10,4 +10,4 @@ ARG DEPENDENCY=target/dependency
 COPY --from=builder ${DEPENDENCY}/BOOT-INF/lib /app/lib
 COPY --from=builder ${DEPENDENCY}/META-INF /app/META-INF
 COPY --from=builder ${DEPENDENCY}/BOOT-INF/classes /app
-ENTRYPOINT ["java","-cp","app:app/lib/*","com.kubikdata.Application"]
+ENTRYPOINT ["java","-cp","app:app/lib/*","-Dmysql-db-pass=${mysql-root-password}","com.kubikdata.Application"]
