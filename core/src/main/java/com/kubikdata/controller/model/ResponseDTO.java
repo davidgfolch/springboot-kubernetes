@@ -1,6 +1,7 @@
-package com.kubikdata.controller;
+package com.kubikdata.controller.model;
 
 import com.kubikdata.model.IBaseEntity;
+import com.kubikdata.util.JsonStringifier;
 import lombok.Getter;
 
 @Getter
@@ -14,19 +15,25 @@ public class ResponseDTO {
     private final IBaseEntity entity;
 
     public ResponseDTO() {
-        this.error=new ErrorResult();
-        this.response= DEFAULT_OK;
-        this.entity=null;
+        this.error = null;
+        this.response = DEFAULT_OK;
+        this.entity = null;
     }
+
     public ResponseDTO(ErrorResult error) {
-        this.error=error;
-        this.response= DEFAULT_ERROR;
-        this.entity=null;
+        this.error = error;
+        this.response = DEFAULT_ERROR;
+        this.entity = null;
     }
 
     public ResponseDTO(IBaseEntity entity) {
-        this.error=null;
+        this.error = null;
         this.response = DEFAULT_OK;
         this.entity = entity;
+    }
+
+    @Override
+    public String toString() {
+        return JsonStringifier.serialize(this);
     }
 }

@@ -84,6 +84,7 @@ if [[ "$*" != *justDeploy* && "$*" != *justDelete* ]]; then
       println "----------------------"
 #      mvn clean install  -DskipTests -Dlogging-level-test=warn
       mvn clean install -pl model
+      mvn clean install -pl core
     else
       println "- BUILDING ONLY IMAGES IN PARAMETERS "
       println "-------------------------------------"

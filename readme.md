@@ -33,6 +33,10 @@ Microservices archetype using a mysql database.
 - Kubernetes fan-out ingress config for backend services (deployment-ingress.yaml)
 - Kubernetes' secrets through dockerfile and springboot application.properties
 
+## Backend tech overview
+
+- encrypted pass in db user table
+
 ## Compile deploy & undeploy (build.sh)
 
 Compile all and deploy to kubernetes.
@@ -73,8 +77,11 @@ For all, one or several microservices, it:
 
 ### TODO
 
+- need of user/../messages.properties duplication of translations for unit testing UserControllerTest, see how to solve this (maven vs resourceBundle)
 - swagger service auto-discover endpoints
 - security improvements
+  - https
+  - spring-security
 - front-end?
 - maven kubernetes plugin  https://maven.fabric8.io/ ??
 

@@ -28,6 +28,19 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
+            <groupId>com.kubikdata</groupId>
+            <artifactId>core</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.kubikdata</groupId>
+            <artifactId>core</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+			<type>test-jar</type>
+            <scope>compile</scope>
+        </dependency>
+		<dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
         </dependency>
