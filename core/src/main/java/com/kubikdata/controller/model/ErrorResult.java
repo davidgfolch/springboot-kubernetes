@@ -14,7 +14,7 @@ public class ErrorResult {
 
     public static final String VALIDATION_FIELD_ERRORS = "validation.field.errors";
 
-    private final List<FieldValidationError> fieldValidation;
+    private final List<FieldValidationError> fieldValidationErrors;
     private final Exception exception;
     private final String code;
     @Setter
@@ -33,12 +33,12 @@ public class ErrorResult {
         this(new ArrayList<>(), e, e.getMessage(), null);
     }
 
-    public ErrorResult(List<FieldValidationError> fieldValidation, Exception e, String code) {
-        this(fieldValidation,e, code,"");
+    public ErrorResult(List<FieldValidationError> fieldValidationErrors, Exception e, String code) {
+        this(fieldValidationErrors,e, code,"");
     }
 
-    public ErrorResult(List<FieldValidationError> fieldValidation, Exception e, String code, String message) {
-        this.fieldValidation=fieldValidation;
+    public ErrorResult(List<FieldValidationError> fieldValidationErrors, Exception e, String code, String message) {
+        this.fieldValidationErrors = fieldValidationErrors;
         this.exception=e;
         this.code = code;
         this.message=message;

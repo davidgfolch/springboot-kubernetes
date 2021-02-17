@@ -11,7 +11,7 @@ import lombok.Getter;
 public class FieldValidationError {
 
     private final String field;
-    private final String errorCode;
+    private final String code;
     private final String message;
 
     @Override

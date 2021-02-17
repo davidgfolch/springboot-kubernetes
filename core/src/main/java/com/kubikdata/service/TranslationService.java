@@ -2,6 +2,7 @@ package com.kubikdata.service;
 
 import com.kubikdata.controller.model.ErrorResult;
 import com.kubikdata.controller.model.ResponseDTO;
+import com.kubikdata.model.IBaseEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.ResourceBundleMessageSource;
@@ -17,7 +18,7 @@ import static com.kubikdata.model.Constants.PARAMS_SEPARATOR;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class TranslateService {
+public class TranslationService {
 
     private final ResourceBundleMessageSource messageSource;
 
@@ -45,7 +46,7 @@ public class TranslateService {
         return messageSource.getMessage(code,args,"??"+code+"??",Locale.ENGLISH);
     }
 
-    public ResponseDTO translate(ResponseDTO responseDTO) {
+    public <T extends IBaseEntity> ResponseDTO<T> translate(ResponseDTO<T> responseDTO) {
         ErrorResult error = responseDTO.getError();
         if (error !=null && StringUtils.hasText(error.getCode())) {
             error.setMessage(translate(error.getCode()));

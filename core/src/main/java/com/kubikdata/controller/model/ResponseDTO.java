@@ -5,14 +5,14 @@ import com.kubikdata.util.JsonStringifier;
 import lombok.Getter;
 
 @Getter
-public class ResponseDTO {
+public class ResponseDTO<T extends IBaseEntity> {
 
     public static final String DEFAULT_OK = "ok";
     public static final String DEFAULT_ERROR = "error";
 
     private final String response;
     private final ErrorResult error;
-    private final IBaseEntity entity;
+    private final T entity;
 
     public ResponseDTO() {
         this.error = null;
@@ -26,7 +26,7 @@ public class ResponseDTO {
         this.entity = null;
     }
 
-    public ResponseDTO(IBaseEntity entity) {
+    public ResponseDTO(T entity) {
         this.error = null;
         this.response = DEFAULT_OK;
         this.entity = entity;

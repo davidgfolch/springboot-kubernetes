@@ -26,9 +26,9 @@ class ApplicationTests {
     @Test
     void baseService_checkConstraintException() {
         SignUpDTO signupDto = SIGNUP_DTO.toBuilder().pass("12345aA.").build();
-        ResponseDTO signup = userController.signup(signupDto);
+        ResponseDTO<?> signup = userController.signup(signupDto);
         assertEquals(DEFAULT_OK, signup.getResponse());
-        ResponseDTO response = userController.signup(signupDto);
+        ResponseDTO<?> response = userController.signup(signupDto);
         assertEquals(DEFAULT_ERROR, response.getResponse());
         ErrorResult error = response.getError();
         assertNotNull(response.getError());

@@ -2,8 +2,9 @@ package com.kubikdata.controller;
 
 import com.kubikdata.controller.model.ErrorResult;
 import com.kubikdata.controller.model.ResponseDTO;
+import com.kubikdata.model.IBaseEntity;
 import com.kubikdata.service.BusinessException;
-import com.kubikdata.service.TranslateService;
+import com.kubikdata.service.TranslationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -16,25 +17,26 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class TranslatorAOP {
+public class TranslationAOP {
 
-    private final TranslateService translateService;
+    private final TranslationService translationService;
 
-    @Pointcut("within(com.kubikdata..*) && execution(* com.kubikdata.*.controller.*.*(..))")
+    @Pointcut("within(com.kubikdata..*) && execution(com.kubikdata.controller.model.ResponseDTO com.kubikdata.*.controller.*.*(..))")
     public void controllerMethods() { //pointcut
     }
 
     @Around("controllerMethods()")
-    public ResponseDTO translate(ProceedingJoinPoint joinPoint) throws Throwable {
+    public <T extends IBaseEntity> ResponseDTO<T> translate(ProceedingJoinPoint joinPoint) throws Throwable {
         try {
-            ResponseDTO response = (ResponseDTO) joinPoint.proceed();
+            @SuppressWarnings("unchecked")
+            ResponseDTO<T> response = (ResponseDTO<T>) joinPoint.proceed();
             log.info("TRANSLATING: {}", response);
-            ResponseDTO translatedResponse = translateService.translate(response);
+            ResponseDTO<T> translatedResponse = translationService.translate(response);
             log.info("TRANSLATED: {}", translatedResponse);
             return translatedResponse;
         } catch (BusinessException e) {
-            log.info("Translating exception {}", e.getMessage());
-            return new ResponseDTO(new ErrorResult(e, e.getMessage(), translateService.translate(e.getMessage())));
+            log.info("TRANSLATING exception {}", e.getMessage());
+            return new ResponseDTO<>(new ErrorResult(e, e.getMessage(), translationService.translate(e.getMessage())));
         }
     }
 }
