@@ -129,14 +129,23 @@ The ip is the `minikube ip` (same as springboot-ingress ip `kubectl get ingress 
     curl "$(minikube ip)"/user/actuator/health | jq .
     # curl 192.168.49.2/swagger/v2/api-docs/ | jq .
 
-User business logic manual test:
+##### User business logic (manual test)
+
+Signup MrBean:
 
     curl -X PUT -H "Content-Type: application/json" "$(minikube ip)"/user/signup \
       -d '{"userName":"mrBean", "email":"misterbean@gmail.com", "name":"mister", "surname":"bean", "pass":"MrBeanIsNumber1!"}' | jq .
-Get token from database (see **Mysql container ssh** above)
 
-    curl -X POST -H "Content-Type: application/json" "$(minikube ip)"/user/verify \
-      -d '{"userName":"mrBean", "token":"6d6d15ba-0fdb-4fba-9320-df3b321b76c0"}' | jq .
+Get token from database:
+
+    kubectl exec -it springboot-mysql-7f6cfcf6b6-vlcxx -- mysql -h 127.0.0.1 -P 3306 -uroot -p'kube1234' -e 'use springboot-db; select verify_token from user where user_name="mrBean";'
+
+Verify user (replace the XXXX with token in next command):
+
+    curl -X POST -H "Content-Type: application/json" "$(minikube ip)"/user/verify -d '{"userName":"mrBean", "token":"XXXX"}' | jq .
+
+Login:
+
     curl -X POST -H "Content-Type: application/json" "$(minikube ip)"/user/login \
       -d '{"userName":"mrBean", "pass":"MrBeanIsNumber1!"}' | jq .
 
