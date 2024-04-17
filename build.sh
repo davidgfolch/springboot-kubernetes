@@ -31,7 +31,7 @@ function buildImage() {
   println "-------------------------------"
   docker build -t $1:0.0.1-SNAPSHOT $1
   docker tag $1:0.0.1-SNAPSHOT $dockerIoUser/kubernetes-springboot-$1 &&
-  #  docker tag kubikdata/$1:latest $dockerIoUser/kubernetes-springboot-$1 &&  with fabric8
+  #  docker tag dgf/$1:latest $dockerIoUser/kubernetes-springboot-$1 &&  with fabric8
   docker push $dockerIoUser/kubernetes-springboot-$1
   return 1
 }

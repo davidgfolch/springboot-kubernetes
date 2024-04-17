@@ -6,7 +6,7 @@ metadata:
     tier: backend
   name: springboot-user
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: springboot-kubernetes
@@ -15,11 +15,16 @@ spec:
     metadata:
       labels:
         app: springboot-kubernetes
+        tier: backend
     spec:
       containers:
         - image: davidgfolch/kubernetes-springboot-user
           name: springboot-user
           resources: {}
+          lifecycle: #https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#deployment.cloud.kubernetes
+            preStop:
+              exec:
+                command: [ "sh", "-c", "sleep 10" ]
           env:
           - name: mysql-root-password
             valueFrom:
@@ -38,11 +43,11 @@ metadata:
     tier: backend
   name: springboot-user
 spec:
-  ports:
-  - name: 8080-8080
-    port: 8080
-    protocol: TCP
-    targetPort: 8080
+#  type: NodePort
   selector:
     app: springboot-kubernetes
-  type: ClusterIP
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8080
+#    nodePort: 32000

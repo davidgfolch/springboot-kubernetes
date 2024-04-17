@@ -7,12 +7,20 @@ You need Docker, and a kubernetes cluster running (f.ex. minikube), see:
 ./start.sh
 ```
 
+If you have problems with `minikube start`:
+```shell
+minikube --driver=docker
+minikube delete
+sudo rm -rf ~/.minikube
+```
+- Certificate problems arise randomly (applying the above clean recreates certificates)
+
 ### Create kubernetes secrets
 
 ```shell
-kubectl create secret generic springboot-mysql-secret --from-literal=mysql-root-password=kube1234 --from-literal=mysql-user=springboot-user --from-literal=mysql-password=kube1234
-kubectl create configmap springboot-mysql-db --from-literal="mysql-database=springboot-db"
+./kubectlSetup.sh
 ```
+
 ## Tech stack
 
 - Bash
@@ -98,14 +106,57 @@ kubectl logs -f springboot-user-xxxxxx
 
 ### Dev utilities
 
-#### Check the endpoint with ingress
+#### Mysql container ssh
 
-The ip is the springboot-ingress ip (`kubectl get ingress springboot-ingress`)
+    kubectl get pods --namespace=default -o=jsonpath="{.items[*].metadata.name}" -l app=springboot-kubernetes,tier=db
+    kubectl exec -it springboot-mysql-7f6cfcf6b6-vlcxx -- mysql -h 127.0.0.1 -P 3306 -uroot -p
 
-    curl -i 192.168.49.2/user/recover && echo
-    curl 192.168.49.2/user/actuator | jq .
+Password is `kube1234`
+In Mysql client:
+
+    use springboot-db;
+    select * from user;
+
+
+#### Check business logic with ingress
+
+You need to enable ingress plugin for minikube:
+
+    minikube addons enable ingress
+    kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.10.0/deploy/static/provider/cloud/deploy.yaml
+    kubectl apply -f deployment-ingress.yaml
+    
+Build all if not done previously:
+
+    ./build.sh
+
+The ip is the `minikube ip` (same as springboot-ingress ip `kubectl get ingress springboot-ingress`).
+
+    curl "$(minikube ip)"/user/actuator | jq .
+    curl "$(minikube ip)"/user/actuator/health | jq .
+    # curl 192.168.49.2/swagger/v2/api-docs/ | jq .
+
+User business logic manual test:
+
+    curl -X PUT -H "Content-Type: application/json" "$(minikube ip)"/user/signup \
+      -d '{"userName":"mrBean", "email":"misterbean@gmail.com", "name":"mister", "surname":"bean", "pass":"MrBeanIsNumber1!"}' | jq .
+Get token from database (see **Mysql container ssh** above)
+
+    curl -X POST -H "Content-Type: application/json" "$(minikube ip)"/user/verify \
+      -d '{"userName":"mrBean", "token":"6d6d15ba-0fdb-4fba-9320-df3b321b76c0"}' | jq .
+    curl -X POST -H "Content-Type: application/json" "$(minikube ip)"/user/login \
+      -d '{"userName":"mrBean", "pass":"MrBeanIsNumber1!"}' | jq .
+
 
 #### Check the endpoints without an ingress
+
+Uncomment port & nodePort in `user/deployment.yaml` and:
+
+    kubectl apply -f user/deployment.yaml
+    kubectl describe svc springboot-user
+    curl -H "Content-Type: application/json" $(minikube ip):32000/user
+
+**TODO NOT WORKING PORT-FORWARD!!!**
 
 Create a port forwarding to access service end-points when there is no ingress:
 
@@ -114,7 +165,7 @@ Create a port forwarding to access service end-points when there is no ingress:
 Check the end-points works
 
     curl -i localhost:8080/user/recover
-    curl localhost:8080/v3/api-docs/ | jq .
+    curl localhost:8080/swagger/v2/api-docs/ | jq .
     curl localhost:8080/user/actuator | jq .
 
 
