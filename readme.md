@@ -1,3 +1,6 @@
+
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=davidgfolch_springboot-kubernetes&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=davidgfolch_springboot-kubernetes)
+
 ## Pre-requisites
 
 ### Start containers
