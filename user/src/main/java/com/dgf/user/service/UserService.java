@@ -37,7 +37,7 @@ public class UserService {
             if (Objects.nonNull(user.getVerifyToken())) {
                 throw new UserBusinessException(VALIDATION_USER_NOT_VERIFIED);
             }
-            return user;
+            return hidePass(user);
         }).orElseThrow(() -> {
             log.info("UserName {} NOT FOUND", userName);
             return new UserBusinessException(VALIDATION_USER_PASS_DONT_MATCH);
@@ -49,18 +49,23 @@ public class UserService {
         log.info(user.toString());
         user.setPass(encoder.encode(user.getPass()));
         User result = checkDataIntegrityViolationException(() -> repo.save(user), CONSTRAINTS);
-        result.setPass(HIDDEN_PASS);
-        return result;
+        return hidePass(result);
+    }
+
+    private static User hidePass(User user) {
+        user.setPass(HIDDEN_PASS);
+        return user;
     }
 
     public User verify(String userName, String token) {
-        return repo.findByUserName(userName).map(user -> {
+        return hidePass(
+                repo.findByUserName(userName).map(user -> {
                     if (isNull(user.getVerifyToken()))
                         throw new UserBusinessException(VALIDATION_USER_ALREADY_VERIFIED);
                     if (!user.getVerifyToken().equals(token))
                         throw new UserBusinessException(VALIDATION_USER_INVALID_VERIFY_TOKEN);
                     return repo.save(user.toBuilder().verifyToken(null).build());
-                }).orElseThrow(() -> new UserBusinessException(VALIDATION_USER_NOT_FOUND));
+                }).orElseThrow(() -> new UserBusinessException(VALIDATION_USER_NOT_FOUND)));
     }
 
     //todo move out of production scope?

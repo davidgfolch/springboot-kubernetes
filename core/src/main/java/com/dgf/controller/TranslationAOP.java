@@ -13,6 +13,8 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
 
+import static com.dgf.service.BusinessException.UNHANDLED_BUSINESS_EXCEPTION;
+
 @Aspect
 @Component
 @RequiredArgsConstructor
@@ -37,6 +39,8 @@ public class TranslationAOP {
             log.info("TRANSLATED: {}", translatedResponse);
             return translatedResponse;
         } catch (BusinessException e) {
+            if (e.getMessage().equals(UNHANDLED_BUSINESS_EXCEPTION))
+                log.error(e.getMessage(),e.getCause());
             log.info("TRANSLATING exception {}", e.getMessage());
             return new ResponseDTO<>(new ErrorResult(e, e.getMessage(), translationService.translate(e.getMessage())));
         }

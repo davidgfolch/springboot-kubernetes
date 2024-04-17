@@ -109,14 +109,7 @@ kubectl logs -f springboot-user-xxxxxx
 #### Mysql container ssh
 
     kubectl get pods --namespace=default -o=jsonpath="{.items[*].metadata.name}" -l app=springboot-kubernetes,tier=db
-    kubectl exec -it springboot-mysql-7f6cfcf6b6-vlcxx -- mysql -h 127.0.0.1 -P 3306 -uroot -p
-
-Password is `kube1234`
-In Mysql client:
-
-    use springboot-db;
-    select * from user;
-
+    kubectl exec -it springboot-mysql-7f6cfcf6b6-vlcxx -- mysql -h 127.0.0.1 -P 3306 -uroot -p'kube1234' -e 'use springboot-db; select verify_token from user where user_name="mrBean";'
 
 #### Check business logic with ingress
 
