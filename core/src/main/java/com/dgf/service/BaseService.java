@@ -12,6 +12,8 @@ import java.util.concurrent.Callable;
 @Slf4j
 public class BaseService {
 
+    private BaseService() {}
+
     public static <T> T checkDataIntegrityViolationException(Callable<T> call, EntityConstraint constraints) {
         try {
             return call.call();
