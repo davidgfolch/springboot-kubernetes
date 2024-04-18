@@ -42,7 +42,6 @@ function compileBuildPushApply() {
   #mvn package fabric8:build -pl $1 -DskipTests &&
   buildImage $1
   kubectl apply -f $1/deployment.yaml
-
 }
 
 if [ $# -eq 0 ]; then
