@@ -1,3 +1,4 @@
+# https://sonarcloud.io/project/configuration/GitHubActions?id=davidgfolch_springboot-kubernetes
 name: SonarCloud
 on:
   push:
@@ -34,4 +35,5 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=davidgfolch_springboot-kubernetes
+        run: echo $SONAR_TOKEN && mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=davidgfolch_springboot-kubernetes
+        # run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=davidgfolch-github -Dsonar.projectKey=davidgfolch_springboot-kubernetes
