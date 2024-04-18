@@ -16,8 +16,9 @@
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <sonar.organization>davidgfolch-github</sonar.organization>
         <sonar.projectKey>davidgfolch_springboot-kubernetes</sonar.projectKey>
+        <!-- ${project.basedir} doesnt' work, creates duplicated folder in path: .../coverageReport/coverageReport/target/site/jacoco-aggregate/jacoco.xml -->
         <sonar.coverage.jacoco.xmlReportPaths>
-            ${project.basedir}/jacocoReportAggregated/./target/site/jacoco-aggregate/jacoco.xml
+            ${user.dir}/coverageReport/target/site/jacoco-aggregate/jacoco.xml
         </sonar.coverage.jacoco.xmlReportPaths>
     </properties>
 
@@ -26,7 +27,7 @@
         <module>core</module>
         <module>user</module>
         <module>swagger</module>
-        <module>jacocoReportAggregated</module>
+        <module>coverageReport</module>
     </modules>
 
 
