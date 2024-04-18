@@ -173,12 +173,19 @@ Check the end-points works
     curl localhost:8080/swagger/v2/api-docs/ | jq .
     curl localhost:8080/user/actuator | jq .
 
-
-
-
 ### Connect to mysql service shell
 
 ```shell
 kubectl exec -it springboot-mysql-5fdd4c8d5b-lq6nw -- bash
 kubectl run -it --rm --image=mysql:5.6 --restart=Never mysql-client -- mysql -h springboot-mysql -ppassword
 ```
+
+## Sonarcloud
+
+Github action is configured execute sonar maven plugin, but coverage doesn't work via Github action yet.  So the github [workflow](https://github.com/davidgfolch/springboot-kubernetes/actions/workflows/sonarCloud.yml) is disabled.
+
+Local execution is working great, see Sonar token in https://sonarcloud.io & replace in cmd line:
+
+    SONAR_TOKEN=******************** mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
+
+https://sonarcloud.io/summary/overall?id=davidgfolch_springboot-kubernetes
