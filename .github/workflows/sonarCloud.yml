@@ -35,4 +35,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}   # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}  #This is taking the repository secret (the environment secret did not work).
-        run: mvn -X -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=davidgfolch_springboot-kubernetes
+        run: mvn -X -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=davidgfolch_springboot-kubernetes -Dsonar.coverage.jacoco.xmlReportPaths=${{ github.workspace }}
+      - name: Show jacoco report
+        run: cat /home/runner/work/springboot-kubernetes/coverageReport/target/site/jacoco-aggregate/jacoco.xml
